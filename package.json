@@ -1,6 +1,6 @@
 {
   "name": "@pollabd/gitu",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Switch Git identity with one word. Zero setup. Pure bliss.",
   "bin": {
     "gitu": "./gitu.js"
