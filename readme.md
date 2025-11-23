@@ -1,55 +1,96 @@
 # @pollabd/gitu
 
-The simplest way to switch between multiple Git accounts.
+**The simplest way to switch Git + GitHub identities — one word, zero config.**
 
-No config files. No includeIf magic. Just one word.
-A tiny, zero‑config tool for instantly switching Git identities.
+```bash
+gitu personal   # → instantly using your personal account
+gitu work       # → instantly using your work account
+gitu who        # → shows who you are right now
+```
 
-Gitu lets you swap between named identities (email, name, SSH key) with a single word — no global config edits, no conditional includes, no ceremony. Define identities once, then switch freely per repository or session.
+No includeIf. No SSH config juggling. No env vars.  
+Just `gitu <name>` and you're done.
 
-Why use gitu?
-- Instant: switch identities with a single command (e.g., gitu work).
-- Minimal: no extra config files or environment hacks.
-- Safe: stores pointers to your SSH keys and identity metadata.
-- Portable: works across projects and machines where you install it.
+## Why developers love gitu
 
-Quick usage
-- Add identities:
-    ```bash
-    gitu add personal "Your Name" you@gmail.com ~/.ssh/id_personal
-    gitu add work     "Your Name" you@company.com ~/.ssh/id_work
-    ```
-- Switch:
-    ```bash
-    gitu personal   # switch to personal identity
-    gitu work       # switch to work identity
-    gitu who        # show current identity
-    gitu list       # list all configured identities
-    ```
+- One command switches **name + email + SSH key**
+- Perfect for personal + work + freelance + open-source accounts
+- Works everywhere: Git Bash, PowerShell, WSL, macOS, Linux
+- Zero setup after the initial `gitu add`
 
-How it works (brief)
-- gitu registers named identities (name, email, SSH key path).
-- When you switch, it updates your Git user.name/user.email and adjusts SSH settings so pushes/pulls use the chosen key.
-- No global config juggling or repo-level overrides required.
+## Installation
 
-Tips
-- Use descriptive identity names (work, personal, open-source).
-- Keep your SSH keys protected and referenced by absolute paths.
-- Combine gitu with your terminal aliases for even faster workflow.
-
-Next: install and configure
-- See the Install section below for npm install and example commands.
-gitu work       # → instantly using work account
-gitu personal   # → back to personal
-gitu who        # → shows current identity
-'''
-
-## Install
-
+```bash
 npm install -g @pollabd/gitu
-gitu add personal "Your Name" you@gmail.com ~/.ssh/id_personal
-gitu add work "Your Name" you@company.com ~/.ssh/id_work
-gitu personal     # one word and done
+```
+
+## One-time setup
+
+```bash
+# Personal account
+gitu add personal "Sarah Connor" sarah.connor@gmail.com ~/.ssh/id_ed25519_personal
+
+# Work account
+gitu add work "Sarah Connor" sarah.connor@skynet.corp ~/.ssh/id_ed25519_work
+
+# Optional: default to personal in every new terminal
+gitu default personal
+```
+
+## Daily use
+
+```bash
+gitu personal          # → personal everything
+gitu work              # → work everything
+gitu who               # → Current: personal → sarah.connor@gmail.com
+gitu list              # → List all identities (→ = active)
+gitu                   # → Quick check (same as gitu who)
+```
+
+## Proof it works (run anytime)
+
+```bash
+gitu personal
+ssh -T git@github.com
+# → Hi sarahconnor! You've successfully authenticated...
+
 gitu work
-gitu who          # Current: work → you@company.com
-gitu list         # see all identities
+ssh -T git@github.com
+# → Hi sarah-skynet! ...
+
+git ls-remote git@github.com:sarahconnor/top-secret-project.git
+# → Permission denied (publickey). ← YES, work key can't touch personal repos!
+```
+
+## All commands
+
+| Command                                       | Description                |
+| --------------------------------------------- | -------------------------- |
+| `gitu personal` / `gitu work`                 | Switch identity            |
+| `gitu who`                                    | Show current identity      |
+| `gitu list`                                   | List all identities        |
+| `gitu add <name> "<Full Name>" <email> <key>` | Add or update identity     |
+| `gitu default <name>`                         | Set default for new shells |
+| `gitu rm <name>`                              | Remove identity            |
+| `gitu` (no args)                              | Same as `gitu who`         |
+
+## Tips
+
+- Use short names: `p`, `w`, `a`, `b`, `oss`, `client1`
+- You can have 20+ identities, no slowdown
+- Works perfectly with GitHub CLI, VS Code, npm, etc.
+
+## Uninstall
+
+```bash
+npm uninstall -g @pollabd/gitu
+rm ~/.gitu.json
+git config --global --unset core.sshCommand   # optional
+```
+
+---
+
+Made with love by **@pollabd**  
+Source & issues → https://github.com/pollabd/gitu
+
+**Never mix personal and work commits again.**
