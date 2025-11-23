@@ -1,0 +1,26 @@
+{
+  "name": "@pollabd/gitu",
+  "version": "1.2.0",
+  "description": "Switch Git identity with one word. Zero setup. Pure bliss.",
+  "main": "gitu.js",
+  "bin": {
+    "gitu": "./gitu.js"
+  },
+  "files": [
+    "gitu.js"
+  ],
+  "author": "pollabd",
+  "license": "MIT",
+  "keywords": [
+    "git",
+    "identity",
+    "ssh",
+    "multiple-accounts",
+    "switch"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollabd/gitu.git"
+  },
+  "homepage": "https://github.com/pollabd/gitu#readme"
+}
