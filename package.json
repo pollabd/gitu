@@ -2,25 +2,32 @@
   "name": "@pollabd/gitu",
   "version": "1.2.0",
   "description": "Switch Git identity with one word. Zero setup. Pure bliss.",
-  "main": "gitu.js",
   "bin": {
     "gitu": "./gitu.js"
   },
   "files": [
     "gitu.js"
   ],
-  "author": "pollabd",
+  "type": "module",
+  "author": "pollabd <youremail@example.com>",
   "license": "MIT",
   "keywords": [
     "git",
     "identity",
     "ssh",
-    "multiple-accounts",
-    "switch"
+    "multiple accounts",
+    "git switch",
+    "git config"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pollabd/gitu.git"
   },
-  "homepage": "https://github.com/pollabd/gitu#readme"
+  "bugs": {
+    "url": "https://github.com/pollabd/gitu/issues"
+  },
+  "homepage": "https://github.com/pollabd/gitu#readme",
+  "engines": {
+    "node": ">=14"
+  }
 }
