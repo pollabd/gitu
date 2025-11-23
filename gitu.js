@@ -12,6 +12,7 @@
  *   gitu add work "John" john@company.com ~/.ssh/id_work
  *   gitu rm work             → delete identity
  */
+"use strict";
 
 const fs = require("fs");
 const os = require("os");
