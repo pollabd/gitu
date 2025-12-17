@@ -9,7 +9,9 @@ const { execSync } = require("child_process");
 const CONFIG_FILE = path.join(os.homedir(), ".gitu.json");
 
 function load() {
-  if (!fs.existsSync(CONFIG_FILE)) return { current: null, identities: {} };
+  if (!fs.existsSync(CONFIG_FILE)) {
+    return { current: null, identities: {} };
+  }
   try {
     return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf-8"));
   } catch {
@@ -31,6 +33,10 @@ function run(cmd) {
   }
 }
 
+function esc(str) {
+  return str.replace(/"/g, '\\"');
+}
+
 const args = process.argv.slice(2);
 const cmd = args[0] || "";
 
@@ -39,18 +45,17 @@ if (cmd === "" || cmd === "--help" || cmd === "-h") {
 gitu - Dead simple Git identity switcher
 
 Usage:
-  gitu personal          → switch to personal
-  gitu work              → switch to work
-  gitu who               → show current
-  gitu list              → list all
+  gitu p / gitu w        → switch identity
+  gitu who              → show current
+  gitu list             → list all
   gitu add <id> "Name" email [ssh-key]
-  gitu rm <id>           → remove identity
+  gitu rm <id>          → remove identity
 `);
   process.exit(0);
 }
 
 if (cmd === "--version" || cmd === "-v") {
-  console.log("gitu v1.2.3");
+  console.log("gitu v1.2.4");
   process.exit(0);
 }
 
@@ -73,13 +78,16 @@ if (cmd === "list") {
 
 if (cmd === "add") {
   const [id, name, email, ssh = null] = args.slice(1);
+
   if (!id || !name || !email) {
-    console.log('Usage: gitu add <id> "Full Name" email [~/.ssh/key]');
+    console.log('Usage: gitu add <id> "Full Name" email [ssh-key]');
     process.exit(1);
   }
+
   const c = load();
   c.identities[id] = { name, email, ssh };
   if (!c.current) c.current = id;
+
   save(c);
   console.log(`Added → ${id} (${email})`);
   process.exit(0);
@@ -88,18 +96,20 @@ if (cmd === "add") {
 if (cmd === "rm") {
   const id = args[1];
   const c = load();
+
   if (!c.identities[id]) {
     console.log(`Identity "${id}" not found`);
     process.exit(1);
   }
+
   delete c.identities[id];
   if (c.current === id) c.current = null;
+
   save(c);
   console.log(`Removed → ${id}`);
   process.exit(0);
 }
 
-// —— SWITCH IDENTITY ——
 const config = load();
 const identity = config.identities[cmd];
 
@@ -108,15 +118,14 @@ if (!identity) {
   process.exit(1);
 }
 
-// Properly escape names with spaces
-run(`git config user.name "${identity.name.replace(/"/g, '\\"')}"`);
-run(`git config user.email "${identity.email}"`);
+run(`git config --global user.name "${esc(identity.name)}"`);
+run(`git config --global user.email "${esc(identity.email)}"`);
 
 if (identity.ssh) {
-  const key = identity.ssh.replace(/^~/, os.homedir());
-  run(`git config core.sshCommand "ssh -i '${key}' -F /dev/null"`);
+  const keyPath = identity.ssh.replace(/^~/, os.homedir());
+  run(`git config --global core.sshCommand "ssh -i \\"${keyPath}\\" -o IdentitiesOnly=yes"`);
 } else {
-  run(`git config --unset core.sshCommand || true`);
+  run(`git config --global --unset core.sshCommand`);
 }
 
 config.current = cmd;
